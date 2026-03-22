@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Borrowing System</title>
+</head>
+<body>
+  <h2>Borrow Item</h2>
+  <form id="borrowForm">
+    ID Number: <input type="text" id="id"><br>
+    Name: <span id="name"></span><br>
+    Item Code: <input type="text" id="item"><br>
+    Item Name: <input type="text" id="itemName"><br>
+    <button type="submit">Borrow</button>
+  </form>
+
+  <script>
+    const sheetAPI = "YOUR_WEB_APP_URL"; // paste your Apps Script URL here
+
+    // Lookup ID → Name
+    document.getElementById("id").addEventListener("blur", async () => {
+      let id = document.getElementById("id").value;
+      let res = await fetch(sheetAPI);
+      let students = await res.json();
+      let match = students.find(row => row[0] == id);
+      document.getElementById("name").innerText = match ? match[1] : "Invalid ID";
+    });
+
+    // Submit borrow record
+    document.getElementById("borrowForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let payload = {
+        id: document.getElementById("id").value,
+        item: document.getElementById("item").value,
+        itemName: document.getElementById("itemName").value
+      };
+      await fetch(sheetAPI, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      alert("Borrow recorded!");
+    });
+  </script>
+</body>
+</html>
